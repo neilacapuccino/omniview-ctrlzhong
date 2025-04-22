@@ -1,0 +1,201 @@
+/* General container */
+body {
+    position: relative;
+    width: 375px;
+    height: 812px;
+    background: #060606;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Ellipse 12 */
+  .ellipse-12 {
+    position: absolute;
+    width: 153px;
+    height: 153px;
+    left: 45px;
+    top: 123px;
+    background: #8FB5FF;
+    border-radius: 50%;
+  }
+  
+  /* Ellipse 13 */
+  .ellipse-13 {
+    position: absolute;
+    width: 99px;
+    height: 99px;
+    left: 244px;
+    top: 716px;
+    background: #8FB5FF;
+    border-radius: 50%;
+  }
+  
+  /* Overlay background */
+  .overlay {
+    position: absolute;
+    width: 375px;
+    height: 812px;
+    left: 0px;
+    top: 0px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(110px);
+  }
+  
+  /* Main group */
+  .group-main {
+    position: absolute;
+    width: 327px;
+    height: 732px;
+    left: 24px;
+    top: 40px;
+  }
+  
+  /* Login button container */
+  .group-login-button {
+    position: absolute;
+    width: 327px;
+    height: 108px;
+    left: 24px;
+    top: 664px;
+  }
+  
+  .rectangle-login {
+    position: absolute;
+    width: 327px;
+    height: 52px;
+    left: 24px;
+    top: 664px;
+    background: linear-gradient(98.49deg, #3574EF -24.24%, #152E5E 102.4%);
+    border-radius: 40px;
+  }
+  
+  .login-text {
+    position: absolute;
+    width: 83px;
+    height: 24px;
+    left: 146px;
+    top: 678px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: #FFFFFF;
+    text-align: center;
+  }
+  
+  /* Checkbox and disclaimer */
+  .checkbox-container {
+    position: absolute;
+    width: 276px;
+    height: 36px;
+    left: 24px;
+    top: 736px;
+  }
+  
+  .checkbox {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 24px;
+    top: 737px;
+    border: 1px solid #727272;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .checkbox-label {
+    position: absolute;
+    width: 252px;
+    height: 36px;
+    left: 48px;
+    top: 736px;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    color: #727272;
+  }
+  
+  /* Email input group */
+  .input-email {
+    position: absolute;
+    width: 327px;
+    height: 56px;
+    left: 24px;
+    top: 496px;
+    background: #111111;
+    border-radius: 40px;
+  }
+  
+  .input-email-label {
+    position: absolute;
+    left: 80px;
+    top: 514px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: #727272;
+  }
+  
+  .input-email-icon {
+    position: absolute;
+    left: 40px;
+    top: 512px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Password input group */
+  .input-password {
+    position: absolute;
+    width: 327px;
+    height: 56px;
+    left: 24px;
+    top: 568px;
+    background: #111111;
+    border-radius: 40px;
+  }
+  
+  .input-password-label {
+    position: absolute;
+    left: 80px;
+    top: 586px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: #727272;
+  }
+  
+  .input-password-icon {
+    position: absolute;
+    left: 40px;
+    top: 584px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Login header */
+  .login-header {
+    position: absolute;
+    width: 135px;
+    height: 28px;
+    left: 120px;
+    top: 40px;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 32px;
+    color: #FFFFFF;
+    text-align: center;
+  }
+  
+  /* Logo or title */
+  .logo-title {
+    position: absolute;
+    width: 239px;
+    height: 195px;
+    left: 80px;
+    top: 211px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 100px;
+    color: #FFFFFF;
+  }
+  
