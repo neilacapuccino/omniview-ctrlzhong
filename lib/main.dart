@@ -264,7 +264,7 @@ class AgreementCheckbox extends StatelessWidget {
         Checkbox(
           value: value,
           onChanged: onChanged,
-          fillColor: MaterialStateProperty.all(const Color(0xFF727272)),
+          fillColor: WidgetStateProperty.all(const Color(0xFF727272)),
         ),
         const Expanded(
           child: Text(
