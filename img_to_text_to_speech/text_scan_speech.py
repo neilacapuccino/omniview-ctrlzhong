@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pyttsx3
 #for config
 pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\tesseract.exe"
-img = cv2.imread("C:\\Users\\juliana\\omniview-ctrlzhong\\img_to_text_to_speech\\text.png")
+img = cv2.imread("C:\\omniview\\img_to_text_to_speech\\text.png")
 plt.imshow(img)
 plt.axis('off')  
 plt.show()
