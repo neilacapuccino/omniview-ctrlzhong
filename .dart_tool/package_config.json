@@ -45,7 +45,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///C:/Users/juliana/Documents/flutter/packages/flutter",
+      "rootUri": "file:///C:/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -63,13 +63,13 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///C:/Users/juliana/Documents/flutter/packages/flutter_test",
+      "rootUri": "file:///C:/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///C:/Users/juliana/Documents/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///C:/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -141,7 +141,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///C:/Users/juliana/Documents/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///C:/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -260,10 +260,10 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-05-04T13:27:22.005968Z",
+  "generated": "2025-05-04T16:11:51.692575Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
-  "flutterRoot": "file:///C:/Users/juliana/Documents/flutter",
+  "flutterRoot": "file:///C:/flutter",
   "flutterVersion": "3.29.3",
   "pubCache": "file:///C:/Users/juliana/AppData/Local/Pub/Cache"
 }

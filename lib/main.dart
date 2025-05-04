@@ -1,587 +1,167 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:math';
+import 'login_ui.dart';
+import 'register_page.dart';
 
-void main() => runApp(const MyApp());
+// ====== Design section ======
+// Colors
+const Color kDeepPurple = Color(0xFF6C4AB6); // Main accent color
+const Color kWhitishPurple = Color(0xFFF8F6FF); // Gradient start
+const Color kWhite = Color(0xFFFFFFFF); // Gradient end
+const Color kStar1 = Color(0xFFE0D7FF);
+const Color kStar2 = Color(0xFFD1C4E9);
+const Color kStar3 = Color(0xFFEDE7F6);
+const Color kStar4 = Color(0xFFE0D7FF);
+const Color kAccent = Color(0xFFB388FF); // Accent for 'create one'
+
+// Texts
+const String kAppTitle = 'OmniView+'; // <-- Change app title here
+const String kLoginButtonText = 'Login'; // <-- Change login button text here
+const String kNoAccountText = 'Do not have an account? '; // <-- Change this text
+const String kCreateOneText = 'create one'; // <-- Change this text
+
+// Star positions (change these to move stars)
+const double kStar1Top = 60;
+const double kStar1Left = 30;
+const double kStar2Top = 100;
+const double kStar2Right = 40;
+const double kStar3Bottom = 80;
+const double kStar3Left = 50;
+const double kStar4Bottom = 120;
+const double kStar4Right = 60;
+// ====== End Editable Variables Section ======
+
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData.dark(),
-      home: const LoginScreen(),
-      routes: {
-        '/signup': (context) => const SignUpScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/forgot-password': (context) => const ForgotPasswordScreen(),
-      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const LoginPage(),
     );
   }
 }
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _agreementAccepted = false;
-
-  void _handleLogin() {
-    if (_agreementAccepted) {
-      Navigator.pushNamed(context, '/home');
-    }
-  }
+// LoginPage replaces MyHomePage as the main screen
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF060606),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            const BackgroundCircles(),
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  const ScreenTitle(),
-                  const SizedBox(height: 100),
-                  const AppLogo(),
-                  const SizedBox(height: 60),
-                  LoginForm(
-                    emailController: _emailController,
-                    passwordController: _passwordController,
-                    obscurePassword: _obscurePassword,
-                    onPasswordVisibilityChanged: () {
-                      setState(() => _obscurePassword = !_obscurePassword);
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  AgreementCheckbox(
-                    value: _agreementAccepted,
-                    onChanged: (value) => setState(() => _agreementAccepted = value!),
-                  ),
-                  const SizedBox(height: 40),
-                  LoginButton(onPressed: _handleLogin),
-                  const SignUpPrompt(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class BackgroundCircles extends StatelessWidget {
-  const BackgroundCircles({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink(); // Removed the circles, keeping the black background.
-  }
-}
-
-class ScreenTitle extends StatelessWidget {
-  const ScreenTitle({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Login',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
-class AppLogo extends StatelessWidget {
-  const AppLogo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'OmniView+',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 40,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-    );
-  }
-}
-
-class LoginForm extends StatelessWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-  final bool obscurePassword;
-  final VoidCallback onPasswordVisibilityChanged;
-
-  const LoginForm({
-    super.key,
-    required this.emailController,
-    required this.passwordController,
-    required this.obscurePassword,
-    required this.onPasswordVisibilityChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomTextField(
-          controller: emailController,
-          hintText: 'Email',
-          icon: Icons.email_outlined,
-        ),
-        const SizedBox(height: 20),
-        CustomTextField(
-          controller: passwordController,
-          hintText: 'Password',
-          icon: Icons.lock_outline,
-          obscureText: obscurePassword,
-        ),
-        const SizedBox(height: 10),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
-            child: const Text(
-              'Forgot Password?',
-              style: TextStyle(color: Color(0xFF999999)),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class CustomTextField extends StatefulWidget {
-  final TextEditingController controller;
-  final String hintText;
-  final IconData icon;
-  final bool obscureText;
-
-  const CustomTextField({
-    super.key,
-    required this.controller,
-    required this.hintText,
-    required this.icon,
-    this.obscureText = false,
-  });
-
-  @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
-}
-
-class _CustomTextFieldState extends State<CustomTextField> {
-  late bool _obscureText;
-
-  @override
-  void initState() {
-    super.initState();
-    _obscureText = widget.obscureText;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: widget.controller,
-      obscureText: _obscureText,
-      style: const TextStyle(color: Colors.black),
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        hintStyle: const TextStyle(
-          fontFamily: 'Inter',
-          fontWeight: FontWeight.w400,
-          fontSize: 16,
-          color: Colors.black54,
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black38),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black),
-        ),
-        prefixIcon: Icon(widget.icon, color: Colors.black54),
-        suffixIcon: widget.obscureText
-            ? IconButton(
-                icon: Icon(
-                  _obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black54,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              )
-            : null,
-      ),
-    );
-  }
-}
-
-class AgreementCheckbox extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool?> onChanged;
-
-  const AgreementCheckbox({
-    super.key,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Checkbox(
-          value: value,
-          onChanged: onChanged,
-          fillColor: WidgetStateProperty.all(const Color(0xFF727272)),
-        ),
-        const Expanded(
-          child: Text(
-            'Accept all the requirements that we have provided',
-            style: TextStyle(color: Color(0xFF727272), fontSize: 12),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class LoginButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const LoginButton({super.key, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3474EF),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
-          ),
-        ),
-        child: const Text(
-          'Login Now',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SignUpPrompt extends StatelessWidget {
-  const SignUpPrompt({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      // Set background to transparent to allow custom background
+      backgroundColor: Colors.transparent,
+      body: Stack(
         children: [
-          const Text(
-            "Don't have an account? ",
-            style: TextStyle(color: Color(0xFF888888)),
+          // Solid white background instead of gradient
+          Container(
+            color: kWhite,
           ),
-          TextButton(
-            onPressed: () => Navigator.pushNamed(context, '/signup'),
-            child: const Text(
-              'Sign Up',
-              style: TextStyle(color: Color(0xFF21BDCA)),
-            ),
+          // Star decorations (minimalist, positioned)
+          // Top left star
+          Positioned(
+            top: kStar1Top, // <-- Change star 1 position above
+            left: kStar1Left, // <-- Change star 1 position above
+            child: Icon(Icons.star, color: kStar1, size: 44), // <-- Change star 1 color above
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Create Account',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Please fill in the details to sign up',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 40),
-            CustomTextField(
-              controller: emailController,
-              hintText: 'Email',
-              icon: Icons.email_outlined,
-            ),
-            const SizedBox(height: 20),
-            CustomTextField(
-              controller: passwordController,
-              hintText: 'Password',
-              icon: Icons.lock_outline,
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            CustomTextField(
-              controller: confirmPasswordController,
-              hintText: 'Confirm Password',
-              icon: Icons.lock_outline,
-              obscureText: true,
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          // Top right star
+          Positioned(
+            top: kStar2Top, // <-- Change star 2 position above
+            right: kStar2Right, // <-- Change star 2 position above
+            child: Icon(Icons.star, color: kStar2, size: 38), // <-- Change star 2 color above
+          ),
+          // Main content (centered)
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Already have an account? ',
-                  style: TextStyle(color: Colors.black87),
+                // OmniView+ logo/title
+                // Position: Centered, Text: OmniView+, Color: Deep purple, Size: 48, FontWeight: bold
+                Text(
+                  kAppTitle, // <-- Change app title above
+                  style: TextStyle(
+                    fontSize: 48, // Large size for logo
+                    fontWeight: FontWeight.bold,
+                    color: kDeepPurple, // <-- Change main accent color above
+                    letterSpacing: 2,
+                    // fontFamily: 'CustomFont', // Uncomment if you add a custom font
+                  ),
                 ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
+                const SizedBox(height: 190), // Space between logo and button
+                // Login button
+                // Position: Centered, Text: Login, Color: White text, Button color: Deep purple, Size: 20
+                SizedBox(
+                  width: 220,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginUI(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kDeepPurple, // <-- Change button color above
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24), // Rounded corners
+                      ),
+                      elevation: 4,
+                    ),
+                    child: Text(
+                      kLoginButtonText, // <-- Change login button text above
+                      style: const TextStyle(
+                        color: Colors.white, // White text
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 164), // Space below button
+                // Do not have an account? create one
+                // Position: Centered below button, Text: 'Do not have an account? create one',
+                // 'create one' in accent color
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      kNoAccountText, // <-- Change this text above
+                      style: TextStyle(
+                        color: kDeepPurple, // <-- Change main accent color above
+                        fontSize: 16,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterPage(),
+                          ),
+                        );
+                      }, // Add navigation to register page if needed
+                      child: Text(
+                        kCreateOneText, // <-- Change this text above
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 126, 81, 204), // <-- Change accent color above
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: const Center(child: Text('Welcome! Login Successful!')),
-    );
-  }
-}
-
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
-
-  @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
-}
-
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
-
-  Future<void> _sendResetEmail() async {
-    final email = _emailController.text;
-    if (email.isNotEmpty) {
-      final random = Random();
-      final code = random.nextInt(9000) + 1000;
-
-      final url = Uri.parse('http://localhost:3000/send-code');
-      try {
-        final response = await http.post(
-          url,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'email': email, 'code': code}),
-        );
-
-        if (response.statusCode == 200) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Verification code sent!')),
-          );
-        } else {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to send code. Please try again.')),
-          );
-        }
-      } catch (error) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error connecting to server')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid email address')),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            const Text(
-              'Forgot Password',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Enter your email to receive a verification code',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 40),
-            TextField(
-              controller: _emailController,
-              style: const TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                hintText: 'Email',
-                hintStyle: const TextStyle(color: Colors.black54),
-                filled: true,
-                fillColor: Colors.white,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black38),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _sendResetEmail,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Send Code',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
