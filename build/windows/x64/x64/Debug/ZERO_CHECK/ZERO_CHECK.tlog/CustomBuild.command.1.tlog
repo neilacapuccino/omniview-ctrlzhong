@@ -1,0 +1,10 @@
+^C:\OMNIVIEW\BUILD\WINDOWS\X64\CMAKEFILES\20907412897F5246AAE5DA8B487B4E28\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/omniview/windows -BC:/omniview/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/omniview/build/windows/x64/flutter_application_1.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
