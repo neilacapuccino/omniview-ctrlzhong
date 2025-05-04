@@ -155,7 +155,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\omniview\build\windows\x64\plugins\url_launcher_windows\ALL_BUILD.vcxproj">
+    <ProjectReference Include="C:\omniview\build\windows\x64\runner\ALL_BUILD.vcxproj">
       <Project>{C5A0F163-6A93-39A3-8639-DE08C0E0A409}</Project>
       <Name>ALL_BUILD</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
