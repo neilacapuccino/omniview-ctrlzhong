@@ -1,0 +1,10 @@
+^C:\OMNIVIEW\BUILD\WINDOWS\X64\CMAKEFILES\20907412897F5246AAE5DA8B487B4E28\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
