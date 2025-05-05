@@ -15,12 +15,14 @@ class _CameraUIState extends State<CameraUI> {
   String _caption = "";
   bool _loading = false;
 
+  // Request camera permission
   Future<void> _requestPermission() async {
     if (await Permission.camera.isDenied) {
       await Permission.camera.request();
     }
   }
 
+  // Pick image from the camera or gallery
   Future<void> _pickImage(ImageSource source) async {
     await _requestPermission(); // Ensure permission
     final picker = ImagePicker();
@@ -36,6 +38,7 @@ class _CameraUIState extends State<CameraUI> {
     }
   }
 
+  // Send image to backend for captioning
   Future<void> _sendImageForCaptioning(File image) async {
     try {
       final uri = Uri.parse('http://127.0.0.1:5000/caption'); // Update this to your backend IP
@@ -48,7 +51,7 @@ class _CameraUIState extends State<CameraUI> {
         final responseBody = await response.stream.bytesToString();
         final data = jsonDecode(responseBody);
         setState(() {
-          _caption = data['caption'] ?? 'No caption received';
+          _caption = data['caption'] ?? 'No caption received'; // Get caption from response
         });
       } else {
         setState(() {
@@ -77,6 +80,7 @@ class _CameraUIState extends State<CameraUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Display the image if it is selected
             if (_image != null)
               Image.file(_image!, height: 200, width: 200, fit: BoxFit.cover)
             else
@@ -84,6 +88,7 @@ class _CameraUIState extends State<CameraUI> {
 
             SizedBox(height: 20),
 
+            // Buttons for taking photo and selecting from gallery
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -102,6 +107,7 @@ class _CameraUIState extends State<CameraUI> {
 
             SizedBox(height: 20),
 
+            // Loading indicator or display the caption
             if (_loading)
               CircularProgressIndicator()
             else if (_caption.isNotEmpty)
