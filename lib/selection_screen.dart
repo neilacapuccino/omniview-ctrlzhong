@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'camera_ui.dart';
-import 'logout_helper.dart';
+import '../logout_helper.dart';
 import 'premium_ui.dart';
 
 class SelectionScreen extends StatelessWidget {
