@@ -35,7 +35,7 @@ class SelectionScreen extends StatelessWidget {
                   label: 'Live lens',
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const CameraUI()),
+                      MaterialPageRoute(builder: (context) =>  CameraUI()),
                     );
                   },
                 ),

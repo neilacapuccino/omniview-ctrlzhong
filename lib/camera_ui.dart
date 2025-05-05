@@ -1,68 +1,67 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-
-// -==-=-=-=-=-=-=- AREA WHHERE TO PUT THE CAMERA PREVIEW
-
-class CameraBox extends StatelessWidget {
-  const CameraBox({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFE8FFF3),
-      child: Center(
-        child: Text(
-          'CAMERA',
-          style: TextStyle(
-            color: const Color.fromARGB(255, 255, 0, 0),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-//-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=end of line
+import 'package:image_picker/image_picker.dart'; // Ensure this import is present
+import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 
 class CameraUI extends StatefulWidget {
-  const CameraUI({Key? key}) : super(key: key);
-
   @override
-  State<CameraUI> createState() => _CameraUIState();
+  _CameraUIState createState() => _CameraUIState();
 }
 
-class _CameraUIState extends State<CameraUI> with SingleTickerProviderStateMixin {
-  String _selectedMode = 'Lens';
+class _CameraUIState extends State<CameraUI> {
+  File? _image;
+  String _caption = "";
+  bool _loading = false;
 
-  void _showModeMenu() async {
-    final mode = await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: Text('Lens'),
-            onTap: () => Navigator.pop(context, 'Lens'),
-          ),
-          ListTile(
-            title: Text('Gesture'),
-            onTap: () => Navigator.pop(context, 'Gesture'),
-          ),
-          ListTile(
-            title: Text('Voice'),
-            onTap: () => Navigator.pop(context, 'Voice'),
-          ),
-          ListTile(
-            title: Text('Coming soon'),
-            enabled: false,
-          ),
-        ],
-      ),
-    );
-    if (mode != null && mode != _selectedMode) {
+  Future<void> _requestPermission() async {
+    if (await Permission.camera.isDenied) {
+      await Permission.camera.request();
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    await _requestPermission(); // Ensure permission
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
       setState(() {
-        _selectedMode = mode;
+        _image = File(pickedFile.path);
+        _caption = "";
+        _loading = true;
+      });
+      await _sendImageForCaptioning(_image!);
+    }
+  }
+
+  Future<void> _sendImageForCaptioning(File image) async {
+    try {
+      final uri = Uri.parse('http://127.0.0.1:5000/caption'); // Update this to your backend IP
+      var request = http.MultipartRequest('POST', uri)
+        ..files.add(await http.MultipartFile.fromPath('image', image.path));
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        final data = jsonDecode(responseBody);
+        setState(() {
+          _caption = data['caption'] ?? 'No caption received';
+        });
+      } else {
+        setState(() {
+          _caption = "Server error: ${response.statusCode}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _caption = "Failed to connect to server.";
+      });
+    } finally {
+      setState(() {
+        _loading = false;
       });
     }
   }
@@ -70,107 +69,45 @@ class _CameraUIState extends State<CameraUI> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8FFF3), 
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: CameraBox(),
-          ),
-          // Top black bar with Home button, Mode centered, and flashlight icon
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 90,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              color: Colors.black,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Home button
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  // Mode centered
-                  Expanded(
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: _showModeMenu,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            _selectedMode,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Flashlight icon
-                  IconButton(
-                    icon: Icon(Icons.flashlight_on, color: Colors.white),
-                    onPressed: () {
-                      // TODO: Add flashlight toggle logic
-                    },
-                  ),
-                ],
-              ),
+      appBar: AppBar(
+        title: Text('Camera and Captioning'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_image != null)
+              Image.file(_image!, height: 200, width: 200, fit: BoxFit.cover)
+            else
+              Text('No image selected'),
+
+            SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _pickImage(ImageSource.camera),  // Use ImageSource.camera
+                  icon: Icon(Icons.camera_alt),
+                  label: Text('Camera'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _pickImage(ImageSource.gallery), // Use ImageSource.gallery
+                  icon: Icon(Icons.photo),
+                  label: Text('Gallery'),
+                ),
+              ],
             ),
-          ),
-          // Bottom black bar with mode-dependent icon
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 120,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              color: Colors.black,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _selectedMode == 'Lens'
-                      ? Text('Live', style: TextStyle(color: Colors.red, fontSize: 22, fontWeight: FontWeight.bold))
-                      : Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                            child: _selectedMode == 'Gesture'
-                                ? Icon(Icons.lightbulb, color: Colors.black, size: 40)
-                                : _selectedMode == 'Voice'
-                                    ? Icon(Icons.mic, color: Colors.black, size: 40)
-                                    : Icon(Icons.radio_button_unchecked, color: Colors.black, size: 40),
-                          ),
-                        ),
-                ],
-              ),
-            ),
-          ),
-        ],
+
+            SizedBox(height: 20),
+
+            if (_loading)
+              CircularProgressIndicator()
+            else if (_caption.isNotEmpty)
+              Text('Caption: $_caption', textAlign: TextAlign.center),
+          ],
+        ),
       ),
     );
   }
