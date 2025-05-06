@@ -33,7 +33,8 @@ com.example.flutter_application_1.app-debug-31 C:\Users\juliana\Desktop\ied\omni
 com.example.flutter_application_1.app-debug-32 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\camera_android\intermediates\packaged_res\debug\packageDebugResources
 com.example.flutter_application_1.app-debug-33 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\flutter_email_sender\intermediates\packaged_res\debug\packageDebugResources
 com.example.flutter_application_1.app-debug-34 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\flutter_plugin_android_lifecycle\intermediates\packaged_res\debug\packageDebugResources
-com.example.flutter_application_1.app-debug-35 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\image_picker_android\intermediates\packaged_res\debug\packageDebugResources
-com.example.flutter_application_1.app-debug-36 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\path_provider_android\intermediates\packaged_res\debug\packageDebugResources
-com.example.flutter_application_1.app-debug-37 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\permission_handler_android\intermediates\packaged_res\debug\packageDebugResources
-com.example.flutter_application_1.app-debug-38 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\url_launcher_android\intermediates\packaged_res\debug\packageDebugResources
+com.example.flutter_application_1.app-debug-35 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\flutter_tts\intermediates\packaged_res\debug\packageDebugResources
+com.example.flutter_application_1.app-debug-36 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\image_picker_android\intermediates\packaged_res\debug\packageDebugResources
+com.example.flutter_application_1.app-debug-37 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\path_provider_android\intermediates\packaged_res\debug\packageDebugResources
+com.example.flutter_application_1.app-debug-38 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\permission_handler_android\intermediates\packaged_res\debug\packageDebugResources
+com.example.flutter_application_1.app-debug-39 C:\Users\juliana\Desktop\ied\omniview-ctrlzhong\build\url_launcher_android\intermediates\packaged_res\debug\packageDebugResources
