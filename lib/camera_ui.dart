@@ -25,13 +25,13 @@ class _CameraUIState extends State<CameraUI> {
     super.dispose();
   }
 
-  Future<void> _requestPermission() async {
-    if (await Permission.camera.isDenied) {
+  Future<void> _requestCameraPermission() async {
+    final status = await Permission.camera.status;
+    if (!status.isGranted) {
       await Permission.camera.request();
     }
   }
 
-  // Pick image from the camera or gallery
   Future<void> _pickImage(ImageSource source) async {
     await _requestCameraPermission();
 
@@ -47,7 +47,7 @@ class _CameraUIState extends State<CameraUI> {
     }
   }
 
-  Future<void> _sendImageForCaptioning(File image) async {
+  Future<void> _processImage(File image) async {
     try {
       final uri = Uri.parse('http://192.168.1.13:5000/caption'); // Replace with your actual backend URL
 
@@ -62,7 +62,7 @@ class _CameraUIState extends State<CameraUI> {
         final caption = data['caption'] ?? 'No caption received';
 
         setState(() {
-          _caption = data['caption'] ?? 'No caption received';
+          _captionText = caption;
         });
 
         await _speakText(caption);
@@ -99,14 +99,12 @@ class _CameraUIState extends State<CameraUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_image != null)
-              Image.file(_image!, height: 200, width: 200, fit: BoxFit.cover)
-            else
-              Text('No image selected'),
+            _selectedImage != null
+                ? Image.file(_selectedImage!, height: 200, width: 200, fit: BoxFit.cover)
+                : const Text('No image selected'),
 
             const SizedBox(height: 20),
 
-            // Buttons for taking photo and selecting from gallery
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -125,10 +123,14 @@ class _CameraUIState extends State<CameraUI> {
 
             const SizedBox(height: 20),
 
-            if (_loading)
-              CircularProgressIndicator()
-            else if (_caption.isNotEmpty)
-              Text('Caption: $_caption', textAlign: TextAlign.center),
+            if (_isLoading)
+              const CircularProgressIndicator()
+            else if (_captionText.isNotEmpty)
+              Text(
+                'Caption: $_captionText',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16),
+              ),
           ],
         ),
       ),
