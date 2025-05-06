@@ -103,8 +103,9 @@ class _LoginUIState extends State<LoginUI> with SingleTickerProviderStateMixin {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
+                      color: Colors.black,
                     ),
-                    textAlign: TextAlign.center, // Set to 
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: kTopSpacing),
                   if (_errorMessage != null) ...[
@@ -168,8 +169,10 @@ class _UsernameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         labelText: 'Username',
+        labelStyle: TextStyle(color: Colors.black),
         border: OutlineInputBorder(),
       ),
     );
@@ -191,12 +194,15 @@ class _PasswordField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: 'Password',
+        labelStyle: const TextStyle(color: Colors.black),
         border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
             obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.black,
           ),
           onPressed: onToggle,
         ),
