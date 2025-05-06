@@ -12,7 +12,7 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Load YOLOv5 model
-yolo_model = torch.hub.load('yolov5', 'yolov5s', source='local', force_reload=True)
+yolo_model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
 # TTS function
 def text_to_speech(text, output_file='tts_output.wav'):
