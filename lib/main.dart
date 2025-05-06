@@ -31,6 +31,14 @@ const double kStar4Bottom = 120;
 const double kStar4Right = 60;
 // ====== End Editable Variables Section ======
 
+// Theme Notifier for app-wide theme switching
+class ThemeNotifier extends ValueNotifier<bool> {
+  ThemeNotifier() : super(false); // false = light, true = dark
+  void toggle() => value = !value;
+}
+
+final themeNotifier = ThemeNotifier();
+
 void main() {
   runApp(const MyApp());
 }
@@ -40,12 +48,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginPage(),
+    return ValueListenableBuilder<bool>(
+      valueListenable: themeNotifier,
+      builder: (context, isDark, _) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primarySwatch: Colors.blue,
+            scaffoldBackgroundColor: kWhite,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.deepPurple,
+            scaffoldBackgroundColor: Colors.black,
+          ),
+          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+          home: const LoginPage(),
+        );
+      },
     );
   }
 }
@@ -56,17 +77,35 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      // Set background to transparent to allow custom background
-      backgroundColor: Colors.transparent,
+      backgroundColor: isDark ? Colors.black : kWhite,
       body: Stack(
         children: [
           // Solid white background instead of gradient
           Container(
-            color: kWhite,
+            color: isDark ? Colors.black : kWhite,
+          ),
+          // Theme toggle button (top right)
+          Positioned(
+            top: 40,
+            right: 24,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              transitionBuilder: (child, anim) => RotationTransition(turns: anim, child: child),
+              child: IconButton(
+                key: ValueKey(isDark),
+                icon: Icon(isDark ? Icons.wb_sunny : Icons.nightlight_round,
+                  color: isDark ? Colors.yellow[600] : kDeepPurple,
+                  size: 32,
+                ),
+                onPressed: () => themeNotifier.toggle(),
+                tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+              ),
+            ),
           ),
           // Star decorations (minimalist, positioned)
-          const StarDecorations(),
+          StarDecorations(isDark: isDark),
           // Main content (centered)
           Center(
             child: Column(
@@ -82,7 +121,7 @@ class LoginPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
-                          color: kDeepPurple, // Keep Omni the original purple
+                          color: isDark ? Colors.white : kDeepPurple,
                           letterSpacing: 2,
                         ),
                       ),
@@ -91,7 +130,7 @@ class LoginPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
-                          color: kDarkerPurple, // Only View+ is darker purple
+                          color: isDark ? kDeepPurple : kDarkerPurple,
                           letterSpacing: 2,
                         ),
                       ),
@@ -178,10 +217,14 @@ class LoginPage extends StatelessWidget {
 }
 
 class StarDecorations extends StatelessWidget {
-  const StarDecorations({Key? key}) : super(key: key);
+  final bool isDark;
+  const StarDecorations({Key? key, required this.isDark}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final starColor1 = isDark ? Colors.yellow[700] : const Color.fromARGB(255, 115, 100, 172);
+    final starColor3 = isDark ? Colors.yellow[500] : const Color.fromARGB(255, 155, 114, 216);
+    final starColor4 = isDark ? Colors.yellow[800] : const Color.fromARGB(255, 157, 140, 216);
     return Stack(
       children: [
         // Top left star
@@ -190,25 +233,17 @@ class StarDecorations extends StatelessWidget {
           left: kStar1Left,
           child: Transform.rotate(
             angle: 0.2,
-            child: Icon(Icons.star, color: kStar1, size: 44),
+            child: Icon(Icons.star, color: starColor1, size: 44),
           ),
         ),
         // Top right star
-        Positioned(
-          top: kStar2Top,
-          right: kStar2Right,
-          child: Transform.rotate(
-            angle: -0.3,
-            child: Icon(Icons.star, color: kStar2, size: 38),
-          ),
-        ),
         // Extra star (top center)
         Positioned(
           top: 20,
           left: 180,
           child: Transform.rotate(
             angle: 1.2,
-            child: Icon(Icons.star, color: kStar3, size: 18),
+            child: Icon(Icons.star, color: starColor3, size: 18),
           ),
         ),
         // Bottom left star
@@ -217,7 +252,7 @@ class StarDecorations extends StatelessWidget {
           left: kStar3Left,
           child: Transform.rotate(
             angle: 0.5,
-            child: Icon(Icons.star, color: kStar3, size: 32),
+            child: Icon(Icons.star, color: starColor3, size: 32),
           ),
         ),
         // Bottom right star
@@ -226,7 +261,7 @@ class StarDecorations extends StatelessWidget {
           right: kStar4Right,
           child: Transform.rotate(
             angle: -0.6,
-            child: Icon(Icons.star, color: kStar4, size: 28),
+            child: Icon(Icons.star, color: starColor4, size: 28),
           ),
         ),
       ],
