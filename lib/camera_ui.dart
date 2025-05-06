@@ -16,7 +16,6 @@ class _CameraUIState extends State<CameraUI> {
   String _captionText = "";
   bool _isLoading = false;
   final FlutterTts _flutterTts = FlutterTts();
-
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -25,15 +24,19 @@ class _CameraUIState extends State<CameraUI> {
     super.dispose();
   }
 
-  Future<void> _requestCameraPermission() async {
-    final status = await Permission.camera.status;
-    if (!status.isGranted) {
+  // Request camera permission
+  Future<void> _requestPermission() async {
+    if (await Permission.camera.isDenied) {
       await Permission.camera.request();
+    }
+    if (await Permission.storage.isDenied) {
+      await Permission.storage.request();
     }
   }
 
+  // Pick image from the camera or gallery
   Future<void> _pickImage(ImageSource source) async {
-    await _requestCameraPermission();
+    await _requestPermission();
 
     final pickedFile = await _picker.pickImage(source: source);
 
@@ -43,13 +46,19 @@ class _CameraUIState extends State<CameraUI> {
         _captionText = "";
         _isLoading = true;
       });
-      await _processImage(File(pickedFile.path));
+      await _processImage(_selectedImage!);
     }
   }
 
+  // Process image for captioning
   Future<void> _processImage(File image) async {
+    await _sendImageForCaptioning(image);
+  }
+
+  // Send image for captioning via HTTP
+  Future<void> _sendImageForCaptioning(File image) async {
     try {
-      final uri = Uri.parse('http://192.168.1.13:5000/caption'); // Replace with your actual backend URL
+      final uri = Uri.parse('http://192.168.1.10:5000/caption'); // Replace with your backend URL
 
       var request = http.MultipartRequest('POST', uri)
         ..files.add(await http.MultipartFile.fromPath('image', image.path));
@@ -82,6 +91,7 @@ class _CameraUIState extends State<CameraUI> {
     }
   }
 
+  // Speak out the caption using TTS
   Future<void> _speakText(String text) async {
     await _flutterTts.setLanguage("en-US");
     await _flutterTts.setPitch(1.0);
@@ -99,12 +109,15 @@ class _CameraUIState extends State<CameraUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _selectedImage != null
-                ? Image.file(_selectedImage!, height: 200, width: 200, fit: BoxFit.cover)
-                : const Text('No image selected'),
+            // Display selected image
+            if (_selectedImage != null)
+              Image.file(_selectedImage!, height: 200, width: 200, fit: BoxFit.cover)
+            else
+              Text('No image selected'),
 
             const SizedBox(height: 20),
 
+            // Buttons for taking photo and selecting from gallery
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -123,14 +136,11 @@ class _CameraUIState extends State<CameraUI> {
 
             const SizedBox(height: 20),
 
+            // Loading indicator or caption text
             if (_isLoading)
-              const CircularProgressIndicator()
+              CircularProgressIndicator()
             else if (_captionText.isNotEmpty)
-              Text(
-                'Caption: $_captionText',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text('Caption: $_captionText', textAlign: TextAlign.center),
           ],
         ),
       ),
