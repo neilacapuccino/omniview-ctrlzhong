@@ -31,7 +31,7 @@ class _PremiumUIState extends State<PremiumUI> {
               Text(
                 isMonthly ? '₱120 / month' : '₱1200 / lifetime',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF402E68),
                 ),
@@ -44,7 +44,7 @@ class _PremiumUIState extends State<PremiumUI> {
                   style: TextStyle(
                     color: Color(0xFF7E57C2),
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -62,16 +62,17 @@ class _PremiumUIState extends State<PremiumUI> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           color: isMonthly ? const Color(0xFF7E57C2) : Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: const Color(0xFF7E57C2)),
                         ),
                         child: Center(
                           child: Text(
                             'Monthly',
                             style: TextStyle(
+                              fontSize: 14,
                               color: isMonthly ? Colors.white : const Color(0xFF7E57C2),
                               fontWeight: FontWeight.bold,
                             ),
@@ -80,7 +81,7 @@ class _PremiumUIState extends State<PremiumUI> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -89,16 +90,17 @@ class _PremiumUIState extends State<PremiumUI> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           color: !isMonthly ? const Color(0xFF7E57C2) : Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: const Color(0xFF7E57C2)),
                         ),
                         child: Center(
                           child: Text(
                             'Lifetime',
                             style: TextStyle(
+                              fontSize: 14,
                               color: !isMonthly ? Colors.white : const Color(0xFF7E57C2),
                               fontWeight: FontWeight.bold,
                             ),
@@ -131,7 +133,7 @@ class _PremiumUIState extends State<PremiumUI> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double boxSize = size.width * 0.8;
+    final double boxSize = size.width * 0.7;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -141,53 +143,67 @@ class _PremiumUIState extends State<PremiumUI> {
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: boxSize,
-              height: boxSize,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _billboards.length,
-                onPageChanged: _onPageChanged,
-                itemBuilder: (context, index) {
-                  return _billboards[index];
-                },
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: boxSize,
+                        height: boxSize,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: _billboards.length,
+                          onPageChanged: _onPageChanged,
+                          itemBuilder: (context, index) {
+                            return _billboards[index];
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF402E68)),
+                            onPressed: () {
+                              int prev = (_currentPage - 1 + _billboards.length) % _billboards.length;
+                              _loopTo(prev);
+                            },
+                          ),
+                          ...List.generate(_billboards.length, (i) => Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _currentPage == i ? const Color(0xFF7E57C2) : Colors.grey[300],
+                                ),
+                              )),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward_ios, color: Color(0xFF402E68)),
+                            onPressed: () {
+                              int next = (_currentPage + 1) % _billboards.length;
+                              _loopTo(next);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF402E68)),
-                  onPressed: () {
-                    int prev = (_currentPage - 1 + _billboards.length) % _billboards.length;
-                    _loopTo(prev);
-                  },
-                ),
-                ...List.generate(_billboards.length, (i) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _currentPage == i ? const Color(0xFF7E57C2) : Colors.grey[300],
-                      ),
-                    )),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios, color: Color(0xFF402E68)),
-                  onPressed: () {
-                    int next = (_currentPage + 1) % _billboards.length;
-                    _loopTo(next);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -214,69 +230,73 @@ class _PremiumBillboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(56.0), // Edit this for shadow cropping
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF7E57C2).withOpacity(0.08), // Less intense, lighter purple shadow
-              blurRadius: 12, // Smaller blur
-              spreadRadius: 1, // Smaller spread
-              offset: const Offset(0, 4), // Smaller offset
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(28.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF402E68),
+      padding: const EdgeInsets.all(28.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF7E57C2).withOpacity(0.08),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                description,
-                style: const TextStyle(fontSize: 16, color: Color(0xFF402E68)),
-              ),
-              if (title == 'Free Trial') ...[
-                const SizedBox(height: 36), // <-- Edit distance before Start Trial button here
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7E57C2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      elevation: 0,
-                    ),
-                    onPressed: onButtonPressed,
-                    child: Text(
-                      buttonText,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF402E68),
                     ),
                   ),
-                ),
-              ],
-              if (title == 'OmniView++' && pricingRow != null) ...[
-                const SizedBox(height: 44), // <-- Edit distance before pricing here
-                pricingRow!,
-                const SizedBox(height: 18), // <-- Edit distance between pricing and selection here
-                child,
-              ],
-            ],
-          ),
-        ),
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: const TextStyle(fontSize: 14, color: Color(0xFF402E68)),
+                  ),
+                  if (title == 'Free Trial') ...[
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF7E57C2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                        ),
+                        onPressed: onButtonPressed,
+                        child: Text(
+                          buttonText,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (title == 'OmniView++' && pricingRow != null) ...[
+                    const SizedBox(height: 32),
+                    pricingRow!,
+                    const SizedBox(height: 12),
+                    child,
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
