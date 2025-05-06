@@ -32,7 +32,7 @@ class SelectionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 36),
                 _SelectionBox(
-                  label: 'Live lens',
+                  label: 'Camera',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) =>  CameraUI()),
